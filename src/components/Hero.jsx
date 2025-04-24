@@ -12,7 +12,7 @@ const Hero = () => {
         <div className="absolute inset-0 bg-black/50 md:bg-black/50 backdrop-blur-sm"></div>
       </div>
       {/* Content */}
-      <div className="relative z-10 max-w-6xl w-full flex flex-col gap-10 items-center">
+      <div className="relative z-10 max-w-6xl w-full flex flex-col gap-10 items-center mb-5">
         {/* Top Hero Section */}
         <section className="bg-gradient-to-br from-blue-900 via-white/20 to-indigo-700 text-white py-12 px-6 md:px-16 rounded-3xl shadow-2xl w-full">
           <div className="text-center">
