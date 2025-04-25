@@ -17,30 +17,18 @@ const Hero = () => {
         <section className="bg-gradient-to-br from-blue-900 via-white/20 to-indigo-700 text-white py-12 px-6 md:px-16 rounded-3xl shadow-2xl w-full">
           <div className="text-center">
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-6">
-              📚 Unlock the Wisdom Within —{" "}
-              <span className="text-yellow-400">Seminar Library</span>
+              📚 Explore Knowledge & Discovery —{" "}
+              <span className="text-yellow-400">RU Mathematics </span>
             </h1>
             <p className="text-lg md:text-xl leading-relaxed">
-              Dive into a treasure trove of knowledge at our{" "}
+              Welcome to the Department of Mathematics at the{" "}
               <span className="text-yellow-300 font-semibold">
-                Mini Library
-              </span>{" "}
-              housed in the Department of Mathematics. From globally acclaimed{" "}
-              <span className="text-pink-300 font-medium">textbooks</span> to
-              rare{" "}
-              <span className="text-pink-300 font-medium">
-                reference materials
+                University of Rajshahi
               </span>
-              , explore resources across Mathematics and other scientific
-              fields.
-            </p>
-            <p className="mt-4 text-base md:text-lg">
-              Whether you're prepping for exams or just fueling your curiosity,
-              enjoy quiet reading or borrow select books for a short time. Plus,
-              access a vast digital archive of{" "}
-              <span className="text-blue-300 font-medium">e-books</span> and{" "}
-              <span className="text-blue-300 font-medium">e-journals</span> via
-              the university's central library — anytime, anywhere!
+              , one of the oldest and most esteemed departments in the country.
+              Known for its academic excellence and vibrant research
+              environment, the department nurtures inquisitive minds through
+              undergraduate, graduate, and doctoral programs.
             </p>
           </div>
         </section>
@@ -50,9 +38,27 @@ const Hero = () => {
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-blue-900 mb-4">
             📘 Manage Your Seminar Books Easily
           </h2>
-          <p className="text-base sm:text-lg md:text-xl text-gray-800 mb-6">
-            Search books by section, track IDs, and simplify your library
-            experience.
+          <p className="mt-4 text-gray-700 md:text-lg">
+            Our{" "}
+            <span className="text-pink-700 font-semibold">Mini Library</span> is
+            a vital part of this academic journey, offering a curated selection
+            of renowned{" "}
+            <span className="text-pink-700 font-medium">textbooks</span>,
+            specialized
+            <span className="text-pink-700 font-medium">
+              {" "}
+              reference materials
+            </span>
+            , and interdisciplinary resources. Whether you're delving into
+            mathematical theory or exploring its applications, you'll find
+            resources to support your growth.
+          </p>
+          <p className="my-3 text-gray-700 md:text-lg">
+            Students and faculty can enjoy quiet study, borrow select titles,
+            and also tap into a comprehensive digital collection of
+            <span className="text-blue-800 font-medium"> e-books</span> and
+            <span className="text-blue-800 font-medium"> e-journals</span> via
+            the university’s central library — accessible anytime, anywhere.
           </p>
           <a
             href="/seminar"

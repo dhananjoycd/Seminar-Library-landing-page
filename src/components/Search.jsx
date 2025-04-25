@@ -1,20 +1,46 @@
-import { useLoaderData } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { bookDataDemo } from "../rawData/dataCollection";
 
 const Search = () => {
-  const bookData = useLoaderData(); // Data from loader
   const [inputValue, setInputValue] = useState("");
   const [selectedIds, setSelectedIds] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const handleSearch = () => {
-    if (bookData[inputValue]) {
-      setSelectedIds(bookData[inputValue]);
-    } else {
-      setSelectedIds([]);
-    }
-  };
+  const perColumn = Math.ceil(selectedIds.length / 3);
+
+  const col1 = selectedIds.slice(0, perColumn);
+  const col2 = selectedIds.slice(perColumn, perColumn * 2);
+  const col3 = selectedIds.slice(perColumn * 2);
+
+  useEffect(() => {
+    const handleSearch = () => {
+      setLoading(true);
+      if (inputValue) {
+        const filteredSelf = bookDataDemo.filter(
+          (item) => item.self.toLowerCase() === inputValue.toLowerCase()
+        );
+
+        const bookIds = filteredSelf.flatMap((item) =>
+          Array(item.quantity).fill(item.bookId)
+        );
+
+        setSelectedIds(bookIds);
+      }
+    };
+    setTimeout(() => {
+      setLoading(false);
+    }, 1500);
+
+    const debounce = setTimeout(() => {
+      handleSearch();
+      // setLoading(false);
+    }, 500);
+
+    return () => clearTimeout(debounce);
+  }, [inputValue]);
+
   const handleDownloadPDF = () => {
     const doc = new jsPDF({
       orientation: "portrait",
@@ -22,41 +48,83 @@ const Search = () => {
       format: "a4",
     });
 
-    doc.setFontSize(18);
-    doc.text(` Books list for ${inputValue}`, 105, 15, {
-      align: "center",
-    });
+    const itemsPerColumn = 20;
+    const columnCount = 3;
+    const itemsPerPage = itemsPerColumn * columnCount;
 
-    const tableRows = [];
-    for (let i = 0; i < selectedIds.length; i += 3) {
-      const row = [
-        selectedIds[i] || "",
-        selectedIds[i + 1] || "",
-        selectedIds[i + 2] || "",
-      ];
-      tableRows.push(row);
+    const totalPages = Math.ceil(selectedIds.length / itemsPerPage);
+
+    for (let page = 0; page < totalPages; page++) {
+      const startIdx = page * itemsPerPage;
+      const pageData = selectedIds.slice(startIdx, startIdx + itemsPerPage);
+
+      // Split into 3 columns
+      const columns = Array.from({ length: columnCount }, (_, i) =>
+        pageData.slice(i * itemsPerColumn, (i + 1) * itemsPerColumn)
+      );
+
+      // Convert columns into rows
+      const tableRows = [];
+      for (let row = 0; row < itemsPerColumn; row++) {
+        const rowData = columns.map((col) => col[row] || "");
+        tableRows.push(rowData);
+      }
+
+      if (page > 0) doc.addPage();
+
+      doc.setFontSize(18);
+      doc.text(`Books list for ${inputValue}`, 105, 15, {
+        align: "center",
+      });
+
+      autoTable(doc, {
+        startY: 25,
+        body: tableRows,
+        theme: "plain",
+        styles: {
+          fontSize: 12,
+          halign: "left",
+          cellPadding: 4,
+          textColor: [40, 40, 40],
+        },
+        columnStyles: {
+          0: { halign: "center" },
+          1: { halign: "center" },
+          2: { halign: "center" },
+        },
+
+        didDrawPage: () => {
+          // Add page number at the bottom center
+          doc.setFontSize(10);
+          doc.text(
+            `Page ${page + 1} of ${totalPages}`,
+            105,
+            doc.internal.pageSize.height - 5,
+            {
+              align: "center",
+            }
+          );
+        },
+      });
     }
 
-    autoTable(doc, {
-      startY: 25,
-
-      body: tableRows,
-      theme: "plain",
-      styles: {
-        fontSize: 16,
-        cellPadding: 4,
-        textColor: [40, 40, 40],
-      },
-      headStyles: {
-        fontStyle: "bold",
-        textColor: [0, 0, 0],
-      },
-      didDrawPage: function () {
-        doc.setFontSize(10);
-      },
-    });
-
     doc.save(`Books list for ${inputValue}.pdf`);
+    alert("✅ PDF downloaded successfully!");
+  };
+
+  const showColumn = (items) => {
+    return (
+      <div className="space-y-4">
+        {items.map((id, index) => (
+          <div
+            key={index}
+            className="bg-white border my-2 border-gray-200 rounded-lg shadow p-4 text-center text-gray-800 hover:shadow-md transition"
+          >
+            {id}
+          </div>
+        ))}
+      </div>
+    );
   };
 
   return (
@@ -74,12 +142,15 @@ const Search = () => {
           className="w-full sm:w-64 border border-gray-300 rounded-lg px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <button
-          onClick={handleSearch}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg shadow transition-all"
+          onClick={handleDownloadPDF}
+          className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded shadow"
         >
-          Search
+          Download PDF
         </button>
       </div>
+      {loading && (
+        <p className="text-center text-sm text-gray-600 my-6">Searching...</p>
+      )}
 
       <div>
         <h3 className="text-xl font-medium text-gray-700 mb-4">
@@ -87,22 +158,17 @@ const Search = () => {
         </h3>
         {selectedIds.length > 0 ? (
           <>
-            <div className="grid grid-cols-3  gap-4">
-              {selectedIds.map((id, index) => (
-                <div
-                  key={index}
-                  className="bg-white border border-gray-200 rounded-lg shadow p-4 text-center text-gray-800"
-                >
-                  {id}
-                </div>
-              ))}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {showColumn(col1)}
+              {showColumn(col2)}
+              {showColumn(col3)}
             </div>
             <div className="my-5 text-center">
               <button
                 onClick={handleDownloadPDF}
                 className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded shadow"
               >
-                Download PDF
+                Download Now
               </button>
             </div>
           </>

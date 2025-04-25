@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -25,7 +26,7 @@ const Header = () => {
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
             <h1 className="text-xl md:text-2xl font-bold text-white">
-              Seminar Library
+              <Link to={"/"}> RU Mathematics</Link>
             </h1>
           </div>
 
